@@ -27,6 +27,11 @@ impl Default for AppSettings {
             recent_files: Vec::new(),
             sidebar_collapsed: false,
             console_height: 200,
+            git_url: String::new(),
+            snippets_enabled: true,
+            enabled_snippets: std::collections::HashMap::new(),
+            api_key: String::new(),
+            use_online_compiler: false,
         }
     }
 }

@@ -318,3 +318,114 @@ pub fn delete_item(path: String) -> Result<(), String> {
     }
 }
 
+#[tauri::command]
+pub fn git_push(workspace_root: String, git_url: String) -> Result<String, String> {
+    use std::process::Command;
+
+    let root_path = std::path::Path::new(&workspace_root);
+    if !root_path.exists() {
+        return Err("Workspace root does not exist".to_string());
+    }
+
+    // 1. Initialize git if not already initialized
+    let git_dir = root_path.join(".git");
+    if !git_dir.exists() {
+        let init_output = Command::new("git")
+            .arg("init")
+            .current_dir(root_path)
+            .output()
+            .map_err(|e| format!("Failed to run git init: {}", e))?;
+        if !init_output.status.success() {
+            return Err(format!(
+                "git init failed: {}",
+                String::from_utf8_lossy(&init_output.stderr)
+            ));
+        }
+    }
+
+    // 2. Set remote origin url if git_url is not empty
+    if !git_url.trim().is_empty() {
+        // Try to remove existing origin
+        let _ = Command::new("git")
+            .args(&["remote", "remove", "origin"])
+            .current_dir(root_path)
+            .output();
+
+        // Add remote origin
+        let remote_output = Command::new("git")
+            .args(&["remote", "add", "origin", git_url.trim()])
+            .current_dir(root_path)
+            .output()
+            .map_err(|e| format!("Failed to set git remote: {}", e))?;
+        if !remote_output.status.success() {
+            return Err(format!(
+                "Failed to set git remote: {}",
+                String::from_utf8_lossy(&remote_output.stderr)
+            ));
+        }
+    }
+
+    // 3. Git add .
+    let add_output = Command::new("git")
+        .args(&["add", "."])
+        .current_dir(root_path)
+        .output()
+        .map_err(|e| format!("Failed to stage files: {}", e))?;
+    if !add_output.status.success() {
+        return Err(format!(
+            "git add failed: {}",
+            String::from_utf8_lossy(&add_output.stderr)
+        ));
+    }
+
+    // 4. Git commit
+    let commit_msg = format!("Solve problem: {}", chrono::Local::now().format("%Y-%m-%d %H:%M:%S"));
+    let _commit_output = Command::new("git")
+        .args(&["commit", "-m", &commit_msg])
+        .current_dir(root_path)
+        .output()
+        .map_err(|e| format!("Failed to commit: {}", e))?;
+
+    // 5. Git push -u origin main
+    if !git_url.trim().is_empty() {
+        // Try push main, if that fails, try master or current branch
+        let push_output = Command::new("git")
+            .args(&["push", "-u", "origin", "main"])
+            .current_dir(root_path)
+            .output()
+            .map_err(|e| format!("Failed to push to main: {}", e))?;
+        
+        if !push_output.status.success() {
+            // Try master
+            let push_master = Command::new("git")
+                .args(&["push", "-u", "origin", "master"])
+                .current_dir(root_path)
+                .output()
+                .map_err(|e| format!("Failed to push to master: {}", e))?;
+            
+            if !push_master.status.success() {
+                // Just try push
+                let push_default = Command::new("git")
+                    .args(&["push", "origin"])
+                    .current_dir(root_path)
+                    .output()
+                    .map_err(|e| format!("Failed to push default: {}", e))?;
+                
+                if !push_default.status.success() {
+                    return Err(format!(
+                        "git push failed: {}",
+                        String::from_utf8_lossy(&push_default.stderr)
+                    ));
+                }
+            }
+        }
+    }
+
+    let status_str = if git_url.trim().is_empty() {
+        "Committed locally (No Git URL configured)".to_string()
+    } else {
+        format!("Successfully committed and pushed to remote origin! ({})", commit_msg)
+    };
+
+    Ok(status_str)
+}
