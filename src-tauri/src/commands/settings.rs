@@ -15,6 +15,11 @@ pub struct AppSettings {
     pub recent_files: Vec<String>,
     pub sidebar_collapsed: bool,
     pub console_height: u32,
+    pub git_url: String,
+    pub snippets_enabled: bool,
+    pub enabled_snippets: std::collections::HashMap<String, bool>,
+    pub api_key: String,
+    pub use_online_compiler: bool,
 }
 
 impl Default for AppSettings {
