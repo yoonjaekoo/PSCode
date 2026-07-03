@@ -7,30 +7,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  release:
+  release-windows:
     permissions:
       contents: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          - windows-latest
-
-    runs-on: ${{ matrix.platform }}
+    runs-on: windows-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 🔥 Node cache 포함
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: npm
 
-      # 🔥 Rust cache 추가 (핵심)
       - name: Cache Rust
         uses: swatinem/rust-cache@v2
 
@@ -42,7 +34,7 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
-      - name: Build Tauri App
+      - name: Build Tauri Windows App
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,6 +55,71 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: PSCode_Setup.exe
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release-android:
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Install NDK
+        run: sdkmanager "ndk;27.0.11902837"
+
+      - name: Set NDK_HOME
+        run: echo "NDK_HOME=$ANDROID_HOME/ndk/27.0.11902837" >> $GITHUB_ENV
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+
+      - name: Cache Rust
+        uses: swatinem/rust-cache@v2
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Init Android project
+        run: npx tauri android init
+
+      - name: Build Android APK
+        run: npx tauri android build --apk
+        env:
+          NDK_HOME: ${{ env.NDK_HOME }}
+
+      - name: Rename APK
+        run: |
+          APK=$(find src-tauri/gen/android -name "*.apk" -path "*/release/*" | head -1)
+          echo "Found APK: $APK"
+          cp "$APK" "PSCode_Android.apk"
+
+      - name: Upload PSCode_Android.apk
+        uses: softprops/action-gh-release@v2
+        with:
+          files: PSCode_Android.apk
           tag_name: ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

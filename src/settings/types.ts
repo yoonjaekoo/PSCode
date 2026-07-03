@@ -9,6 +9,8 @@ export interface AppSettings {
   gitUrl: string;
   snippetsEnabled: boolean;
   enabledSnippets: Record<string, boolean>;
+  apiKey: string;
+  useOnlineCompiler: boolean;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -22,4 +24,6 @@ export const DEFAULT_SETTINGS: AppSettings = {
   gitUrl: "",
   snippetsEnabled: true,
   enabledSnippets: {},
+  apiKey: "",
+  useOnlineCompiler: false,
 };

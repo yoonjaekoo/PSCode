@@ -6,8 +6,18 @@ PS(Competitive Programming) 전용 도구로, 빠른 코드 작성과 즉각적�
 ## 🚀 배포 및 자동화 (CI/CD)
 
 ### GitHub Actions 자동 배포
-- **자동 빌드**: `v*` 형태의 태그(예: `v0.1.0`)를 푸시하면 GitHub Actions가 자동으로 Windows용 실행 파일(.exe)을 빌드합니다.
+- **자동 빌드**: `v*` 형태의 태그(예: `v0.1.0`)를 푸시하면 GitHub Actions가 자동으로 빌드를 실행합니다.
+- **Windows (.exe)**: Windows용 설치 파일(`PSCode_Setup.exe`)이 자동 빌드되어 Release에 업로드됩니다.
+- **Android (.apk)**: Android용 APK(`PSCode_Android.apk`)가 자동 빌드되어 Release에 업로드됩니다.
+  - Android에서는 로컬 GCC 컴파일이 불가능하므로 **OnlineCompiler.io**를 통해 코드를 컴파일/실행합니다.
 - **Release 자동 생성**: 빌드된 결과물은 GitHub Release에 초안(Draft)으로 업로드되어 즉시 배포 가능합니다.
+
+### Android APK 사용 시 주의사항
+- Android 앱은 로컬 GCC 컴파일러를 사용할 수 없습니다.
+- **OnlineCompiler.io API 키**를 발급받아 설정에서 등록하고 "Use Online Compiler"를 활성화해야 합니다.
+  - [OnlineCompiler.io](https://onlinecompiler.io)에서 회원가입 후 API 키를 발급받으세요.
+  - 설정 창(`Ctrl+,`)에서 API Key를 입력하고 체크박스를 활성화하세요.
+  - 이후 모든 컴파일/실행이 OnlineCompiler.io API를 통해 이루어집니다.
 
 ### 간편 배포 스크립트
 제공된 스크립트를 사용하여 커밋, 푸시, 태그 생성을 한 번에 처리할 수 있습니다:
@@ -41,11 +51,25 @@ PS(Competitive Programming) 전용 도구로, 빠른 코드 작성과 즉각적�
 
 ## 🛠 사전 요구사항
 
+### 공통
 - Node.js 20+
 - Rust ([rustup](https://rustup.rs/))
-- Windows: Visual Studio Build Tools, WebView2
+
+### Windows (데스크톱)
+- Visual Studio Build Tools, WebView2
 - **C++17 컴파일러**: [MSYS2](https://www.msys2.org/) mingw64 권장
   - **프로그램 내에서 자동 설치 기능을 제공합니다.** 수동 설치 시 기본 경로는 `C:\msys64\mingw64\bin\g++.exe`입니다.
+
+### Android APK 빌드 (선택사항, GitHub Actions에서 자동 처리)
+- Android APK는 GitHub Actions에서 자동으로 빌드되며, 로컬에서 빌드하려면 다음이 필요합니다:
+  - JDK 17+
+  - Android SDK (API 34+)
+  - Android NDK 27+
+  - Rust Android targets: `aarch64-linux-android`, `armv7-linux-androideabi`, `i686-linux-android`, `x86_64-linux-android`
+
+### OnlineCompiler.io (Android 필수)
+- Android에서는 로컬 GCC 대신 [OnlineCompiler.io](https://onlinecompiler.io) API를 통해 코드를 컴파일합니다.
+- 설정 창(`Ctrl+,`)에서 API Key를 등록하고 "Use Online Compiler"를 활성화하세요.
 
 ---
 

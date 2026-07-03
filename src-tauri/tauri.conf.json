@@ -36,6 +36,10 @@
     ],
     "resources": [
       "resources/gcc/mingw64/placeholder"
-    ]
+    ],
+    "android": {
+      "minSdkVersion": 24,
+      "versionCode": 1
+    }
   }
 }

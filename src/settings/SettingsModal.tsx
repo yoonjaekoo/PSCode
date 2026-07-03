@@ -19,6 +19,8 @@ export function SettingsModal() {
     snippetsEnabled: settings.snippetsEnabled,
     enabledSnippets: { ...settings.enabledSnippets },
     gitUrl: settings.gitUrl,
+    apiKey: settings.apiKey,
+    useOnlineCompiler: settings.useOnlineCompiler,
   });
 
   useEffect(() => {
@@ -31,6 +33,8 @@ export function SettingsModal() {
         snippetsEnabled: settings.snippetsEnabled,
         enabledSnippets: { ...settings.enabledSnippets },
         gitUrl: settings.gitUrl,
+        apiKey: settings.apiKey,
+        useOnlineCompiler: settings.useOnlineCompiler,
       });
     }
   }, [openModal, settings]);
@@ -46,6 +50,8 @@ export function SettingsModal() {
       snippetsEnabled: draft.snippetsEnabled,
       enabledSnippets: draft.enabledSnippets,
       gitUrl: draft.gitUrl,
+      apiKey: draft.apiKey,
+      useOnlineCompiler: draft.useOnlineCompiler,
     });
     await settings.persistSettings();
     await settings.setLanguage(draft.language);
@@ -164,6 +170,43 @@ export function SettingsModal() {
               )}
             </div>
           </Field>
+
+          <div className="pt-2 border-t border-[var(--border)]">
+            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
+              OnlineCompiler.io
+            </h3>
+
+            <Field label="API Key">
+              <input
+                type="password"
+                value={draft.apiKey}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, apiKey: e.target.value }))
+                }
+                placeholder="Enter your OnlineCompiler.io API key"
+                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border)] rounded text-sm font-mono text-[var(--text-primary)]"
+              />
+            </Field>
+
+            <Field label="Use Online Compiler">
+              <label className="inline-flex items-center space-x-2 mt-1">
+                <input
+                  type="checkbox"
+                  checked={draft.useOnlineCompiler}
+                  onChange={(e) =>
+                    setDraft((d) => ({
+                      ...d,
+                      useOnlineCompiler: e.target.checked,
+                    }))
+                  }
+                  className="form-checkbox h-4 w-4 text-[var(--accent)]"
+                />
+                <span className="text-sm text-[var(--text-secondary)]">
+                  Compile and run via OnlineCompiler.io API (required for Android)
+                </span>
+              </label>
+            </Field>
+          </div>
 
           <Field label={t("settings.autosave")}>
             <input

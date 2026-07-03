@@ -18,6 +18,8 @@ pub struct AppSettings {
     pub git_url: String,
     pub snippets_enabled: bool,
     pub enabled_snippets: std::collections::HashMap<String, bool>,
+    pub api_key: String,
+    pub use_online_compiler: bool,
 }
 
 impl Default for AppSettings {
