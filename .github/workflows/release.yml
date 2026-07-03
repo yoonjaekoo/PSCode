@@ -88,6 +88,10 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Accept Android licenses
+        shell: bash
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
@@ -97,17 +101,8 @@ jobs:
         run: npm ci
 
       - name: Build Android APK
-        uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          releaseId: ${{ github.event.release.id }}
-          tagName: ${{ github.ref_name }}
-          releaseName: 'PSCode ${{ github.ref_name }} Android'
-          releaseBody: 'See the assets below for the Android APK.'
-          releaseDraft: false
-          prerelease: false
-          args: android build
+        shell: bash
+        run: npm run tauri android build
 
       - name: Find and rename APK
         shell: bash
