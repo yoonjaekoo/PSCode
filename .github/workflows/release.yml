@@ -100,6 +100,10 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      - name: Initialize Android project
+        shell: bash
+        run: npm run tauri android init
+
       - name: Build Android APK
         shell: bash
         run: npm run tauri android build
