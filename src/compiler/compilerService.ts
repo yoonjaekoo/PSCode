@@ -14,6 +14,18 @@ export const compilerService = {
     });
   },
 
+  async onlineCompileAndRun(
+    sourceCode: string,
+    input: string,
+    apiKey: string,
+  ): Promise<RunOutput> {
+    return invoke<RunOutput>("online_compile_and_run", {
+      sourceCode,
+      input,
+      apiKey,
+    });
+  },
+
   async detectCompiler(customPath?: string) {
     return invoke<{ path: string; found: boolean }>("detect_compiler", {
       customPath: customPath || null,

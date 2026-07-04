@@ -49,6 +49,11 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       recentFiles,
       sidebarCollapsed,
       consoleHeight,
+      gitUrl,
+      snippetsEnabled,
+      enabledSnippets,
+      apiKey,
+      useOnlineCompiler,
     } = get();
     await invoke("save_settings", {
       settings: {
@@ -59,6 +64,11 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         recentFiles,
         sidebarCollapsed,
         consoleHeight,
+        gitUrl,
+        snippetsEnabled,
+        enabledSnippets,
+        apiKey,
+        useOnlineCompiler,
       },
     });
   },

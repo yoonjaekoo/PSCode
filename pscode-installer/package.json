@@ -1,0 +1,17 @@
+{
+  "name": "@yoonjaekooo/pscode",
+  "version": "1.0.0",
+  "description": "One-line installer for PSCode - Competitive Programming Editor",
+  "bin": {
+    "pscode": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yoonjaekoo-edu/PSCode"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": ["pscode", "competitive-programming", "editor"],
+  "license": "MIT"
+}

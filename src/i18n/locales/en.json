@@ -34,7 +34,10 @@
     "install": "Auto-Install (MSYS2)",
     "installing": "Installing...",
     "installSuccess": "Compiler installed successfully",
-    "installFailed": "Installation failed: {{error}}"
+    "installFailed": "Installation failed: {{error}}",
+    "modeLocal": "MinGW (Local)",
+    "modeOnline": "OnlineCompiler.io",
+    "onlineRunning": "Online compiling..."
   },
   "settings": {
     "title": "Settings",
@@ -42,6 +45,8 @@
     "compilerPath": "Compiler path (g++)",
     "workspaceRoot": "Workspace folder",
     "autosave": "Autosave interval (ms)",
+    "compilerMode": "Compiler Mode",
+    "apiKey": "API Key",
     "browse": "Browse",
     "save": "Save",
     "cancel": "Cancel"

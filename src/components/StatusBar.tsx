@@ -11,6 +11,8 @@ export function StatusBar() {
   const saveStatus = useEditorStore((s) => s.saveStatus);
   const setContent = useEditorStore((s) => s.setContent);
   const compilerFound = useSettingsStore((s) => s.compilerFound);
+  const useOnlineCompiler = useSettingsStore((s) => s.useOnlineCompiler);
+  const apiKey = useSettingsStore((s) => s.apiKey);
   const language = useSettingsStore((s) => s.language);
   const setCommandPaletteOpen = useUiStore((s) => s.setCommandPaletteOpen);
   const editorRef = useEditorRefStore((s) => s.editorRef);
@@ -77,7 +79,13 @@ export function StatusBar() {
       <span className="truncate max-w-[40%]">{fileName}</span>
       <span>{statusLabel}</span>
       <span className="ml-auto">
-        {compilerFound ? t("compiler.found") : t("compiler.notFound")}
+        {useOnlineCompiler
+          ? apiKey
+            ? "OnlineCompiler.io"
+            : t("compiler.notFound")
+          : compilerFound
+            ? t("compiler.found")
+            : t("compiler.notFound")}
       </span>
       <span className="uppercase">{language}</span>
       <span className="opacity-80">{t("shortcuts.run")}</span>
