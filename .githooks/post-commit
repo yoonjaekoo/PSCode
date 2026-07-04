@@ -1,0 +1,18 @@
+#!/bin/sh
+
+LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
+if [ -z "$LATEST_TAG" ]; then
+  exit 0
+fi
+
+VERSION=${LATEST_TAG#v}
+
+node -e "
+const fs = require('fs');
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+if (pkg.version !== '$VERSION') {
+  pkg.version = '$VERSION';
+  fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+  console.log('npm version synced to', '$VERSION', '(from tag', '$LATEST_TAG)');
+}
+"

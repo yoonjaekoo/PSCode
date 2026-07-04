@@ -1,13 +1,16 @@
 {
   "name": "pscode",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.5.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "release:patch": "npm version patch",
+    "release:minor": "npm version minor",
+    "release:major": "npm version major"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
