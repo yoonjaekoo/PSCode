@@ -429,3 +429,83 @@ pub fn git_push(workspace_root: String, git_url: String) -> Result<String, Strin
 
     Ok(status_str)
 }
+
+#[tauri::command]
+pub fn git_pull(workspace_root: String, git_url: String) -> Result<String, String> {
+    use std::process::Command;
+
+    let root_path = std::path::Path::new(&workspace_root);
+    if !root_path.exists() {
+        return Err("Workspace root does not exist".to_string());
+    }
+
+    // Ensure git is initialized
+    let git_dir = root_path.join(".git");
+    if !git_dir.exists() {
+        return Err("Not a git repository. Please use 'Commit & Push' first to initialize.".to_string());
+    }
+
+    // Set remote origin url if git_url is not empty
+    if !git_url.trim().is_empty() {
+        let _ = Command::new("git")
+            .args(&["remote", "remove", "origin"])
+            .current_dir(root_path)
+            .output();
+
+        let remote_output = Command::new("git")
+            .args(&["remote", "add", "origin", git_url.trim()])
+            .current_dir(root_path)
+            .output()
+            .map_err(|e| format!("Failed to set git remote: {}", e))?;
+        if !remote_output.status.success() {
+            return Err(format!(
+                "Failed to set git remote: {}",
+                String::from_utf8_lossy(&remote_output.stderr)
+            ));
+        }
+    }
+
+    // Get current branch name
+    let branch_output = Command::new("git")
+        .args(&["rev-parse", "--abbrev-ref", "HEAD"])
+        .current_dir(root_path)
+        .output()
+        .map_err(|e| format!("Failed to get current branch: {}", e))?;
+    if !branch_output.status.success() {
+        return Err(format!(
+            "Failed to get current branch: {}",
+            String::from_utf8_lossy(&branch_output.stderr)
+        ));
+    }
+    let branch = String::from_utf8_lossy(&branch_output.stdout).trim().to_string();
+
+    // Fetch and pull
+    let fetch_output = Command::new("git")
+        .args(&["fetch", "origin", &branch])
+        .current_dir(root_path)
+        .output()
+        .map_err(|e| format!("Failed to fetch: {}", e))?;
+    if !fetch_output.status.success() {
+        return Err(format!(
+            "git fetch failed: {}",
+            String::from_utf8_lossy(&fetch_output.stderr)
+        ));
+    }
+
+    let pull_output = Command::new("git")
+        .args(&["pull", "origin", &branch])
+        .current_dir(root_path)
+        .output()
+        .map_err(|e| format!("Failed to pull: {}", e))?;
+    if !pull_output.status.success() {
+        return Err(format!(
+            "git pull failed: {}",
+            String::from_utf8_lossy(&pull_output.stderr)
+        ));
+    }
+
+    Ok(format!(
+        "Successfully pulled latest changes from origin/{}",
+        branch
+    ))
+}
