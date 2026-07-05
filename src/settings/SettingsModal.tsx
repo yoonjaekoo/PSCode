@@ -18,6 +18,7 @@ export function SettingsModal() {
     autosaveIntervalMs: settings.autosaveIntervalMs,
     apiKey: settings.apiKey,
     useOnlineCompiler: settings.useOnlineCompiler,
+    gitUrl: settings.gitUrl,
   });
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export function SettingsModal() {
         autosaveIntervalMs: settings.autosaveIntervalMs,
         apiKey: settings.apiKey,
         useOnlineCompiler: settings.useOnlineCompiler,
+        gitUrl: settings.gitUrl,
       });
     }
   }, [openModal, settings]);
@@ -36,7 +38,15 @@ export function SettingsModal() {
   if (!openModal) return null;
 
   const handleSave = async () => {
-    settings.updateSettings(draft);
+    settings.updateSettings({
+      language: draft.language,
+      compilerPath: draft.compilerPath,
+      workspaceRoot: draft.workspaceRoot,
+      autosaveIntervalMs: draft.autosaveIntervalMs,
+      apiKey: draft.apiKey,
+      useOnlineCompiler: draft.useOnlineCompiler,
+      gitUrl: draft.gitUrl,
+    });
     await settings.persistSettings();
     await settings.setLanguage(draft.language);
     await workspaceService.ensureWorkspace();
@@ -176,6 +186,18 @@ export function SettingsModal() {
               </div>
             </Field>
           )}
+
+          <Field label="Git Repository URL">
+            <input
+              type="text"
+              value={draft.gitUrl}
+              onChange={(e) =>
+                setDraft((d) => ({ ...d, gitUrl: e.target.value }))
+              }
+              placeholder="https://github.com/username/repository.git"
+              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border)] rounded text-sm text-[var(--text-primary)] font-mono outline-none focus:border-[var(--accent)]"
+            />
+          </Field>
 
           <Field label={t("settings.autosave")}>
             <input

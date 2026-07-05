@@ -2,7 +2,7 @@ mod commands;
 
 use commands::{
     compile_and_run, create_problem_file, detect_compiler, ensure_workspace, get_settings,
-    install_compiler, list_today_files, online_compile_and_run, read_file, save_settings,
+    git_push, install_compiler, list_today_files, online_compile_and_run, read_file, save_settings,
     write_file, list_directory_recursive, create_file, create_directory, rename_item, delete_item,
 };
 
@@ -28,6 +28,7 @@ pub fn run() {
             create_directory,
             rename_item,
             delete_item,
+            git_push,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
