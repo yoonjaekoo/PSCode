@@ -1,3 +1,5 @@
+
+
 # PSCode
 
 경량 competitive programming 데스크톱 에디터 (Tauri 2 + React + Monaco).  
@@ -7,7 +9,7 @@ PS(Competitive Programming) 전용 도구로, 빠른 코드 작성과 즉각적�
 
 ### GitHub Actions 자동 배포
 - **자동 빌드**: `v*` 형태의 태그(예: `v0.1.0`)를 푸시하면 GitHub Actions가 자동으로 Windows용 실행 파일(.exe)을 빌드합니다.
-- **Release 자동 생성**: 빌드된 결과물은 GitHub Release에 초안(Draft)으로 업로드되어 즉시 배포 가능합니다.
+- **Release 자동 생성**: 빌드된 결과물은 GitHub Release에 자동으로 업로드됩니다.
 
 ### 간편 배포 스크립트
 제공된 스크립트를 사용하여 커밋, 푸시, 태그 생성을 한 번에 처리할 수 있습니다:
